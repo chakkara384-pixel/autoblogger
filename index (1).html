@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signal & Story — Blog Studio</title>
+  <style>
+    :root {
+      --ink: #1d2925;
+      --muted: #748079;
+      --paper: #f7f8f4;
+      --card: #fff;
+      --line: #e6e9e3;
+      --green: #2f7056;
+      --green-light: #e8f2eb;
+      --gold: #d3a657;
+      --shadow: 0 12px 35px rgba(34, 50, 42, .06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .layout { min-height: 100vh; display: grid; grid-template-columns: 248px 1fr; }
+    aside {
+      background: #fff;
+      border-right: 1px solid var(--line);
+      padding: 28px 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; margin: 2px 6px 38px; }
+    .brand-mark {
+      display: grid; place-items: center; width: 36px; height: 36px;
+      color: white; background: var(--green); border-radius: 12px; font-weight: 800;
+    }
+    .brand-name { font: 700 17px Georgia, serif; letter-spacing: -.3px; }
+    .nav-label { color: #a0a9a2; font-size: 10px; font-weight: 800; letter-spacing: 1.4px; margin: 25px 10px 9px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px; padding: 11px 12px;
+      border-radius: 9px; color: #66736b; margin: 3px 0; font-size: 13px;
+    }
+    .nav-item.active { color: var(--green); background: var(--green-light); font-weight: 700; }
+    .sidebar-note {
+      margin-top: 40px; padding: 15px; background: #f8f6ef;
+      border: 1px solid #eee9dc; border-radius: 12px; color: #776e5c; font-size: 12px;
+    }
+    main { min-width: 0; }
+    header {
+      height: 74px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,.82); border-bottom: 1px solid var(--line);
+      padding: 0 5.2%;
+    }
+    .crumb { color: var(--muted); font-size: 13px; }
+    .account { display: flex; align-items: center; gap: 10px; color: #56635b; font-size: 13px; }
+    .avatar { width: 31px; height: 31px; display: grid; place-items: center; border-radius: 50%; background: #e8eee8; color: var(--green); font-weight: 700; }
+    .content { max-width: 1260px; margin: auto; padding: 38px 5.2% 60px; }
+    .eyebrow { color: var(--green); font-size: 11px; letter-spacing: 1.5px; font-weight: 800; text-transform: uppercase; }
+    h1 { margin: 8px 0 6px; font: 500 clamp(30px, 4vw, 42px)/1.12 Georgia, serif; letter-spacing: -1.2px; }
+    .subhead { margin: 0; color: var(--muted); }
+    .top-row { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 27px; }
+    .date { color: var(--muted); font-size: 12px; }
+    .status {
+      display: inline-flex; gap: 7px; align-items: center; color: #8a6929;
+      background: #faf3e4; border: 1px solid #f1e5c9; border-radius: 20px;
+      padding: 7px 11px; font-size: 11px; font-weight: 700;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+    .grid { display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(350px, .94fr); gap: 20px; align-items: start; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+    .card-head { padding: 19px 21px 14px; display: flex; justify-content: space-between; align-items: center; }
+    .card-head h2 { font: 600 18px Georgia, serif; margin: 0; }
+    .small-label { color: var(--muted); font-size: 11px; }
+    .trend-list { padding: 0 14px 14px; }
+    .trend {
+      display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center;
+      border: 1px solid transparent; padding: 12px 10px; border-radius: 10px; cursor: pointer;
+    }
+    .trend:hover, .trend.selected { background: #f5f8f5; border-color: #e0eae2; }
+    .trend-icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: #f0f3ed; }
+    .trend-title { font-weight: 700; font-size: 13px; }
+    .trend-meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .growth { color: var(--green); font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .trend-source { border-top: 1px solid var(--line); margin: 4px 7px 0; padding: 12px 4px 0; color: var(--muted); font-size: 10px; }
+    .form { padding: 0 21px 21px; }
+    label { display: block; font-size: 11px; font-weight: 700; color: #56635b; margin: 13px 0 6px; }
+    input, textarea {
+      width: 100%; padding: 11px 12px; border: 1px solid #dfe5de;
+      border-radius: 8px; outline: none; background: #fff; color: var(--ink);
+    }
+    input:focus, textarea:focus { border-color: #8bb49b; box-shadow: 0 0 0 3px #eaf3ec; }
+    textarea { min-height: 72px; resize: vertical; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+    .hint { margin: 7px 0 0; color: var(--muted); font-size: 10px; }
+    .primary, .secondary {
+      border: 0; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-weight: 700;
+    }
+    .primary { color: #fff; background: var(--green); }
+    .primary:hover { background: #255a44; }
+    .secondary { color: #536159; background: #f0f3ef; border: 1px solid var(--line); }
+    .full { width: 100%; margin-top: 15px; }
+    .preview { margin-top: 20px; }
+    .preview-body { padding: 4px 21px 20px; }
+    .preview-image {
+      height: 135px; display: grid; place-items: center; overflow: hidden;
+      background: linear-gradient(120deg, #dce8dd, #f1e9d8); border-radius: 10px; color: #65796b;
+      font: italic 14px Georgia, serif; text-align: center;
+    }
+    .preview-image img { width: 100%; height: 100%; object-fit: cover; }
+    .preview-title { font: 600 24px/1.2 Georgia, serif; margin: 16px 0 7px; }
+    .preview-meta { color: var(--muted); font-size: 11px; }
+    .preview-copy { white-space: pre-wrap; color: #48554e; font: 14px/1.7 Georgia, serif; margin-top: 15px; }
+    .approval {
+      display: flex; align-items: flex-start; gap: 9px; padding: 12px;
+      background: #f7f8f5; border-radius: 9px; margin-top: 16px;
+      color: #5c675f; font-size: 11px;
+    }
+    .approval input { width: auto; margin: 2px 0 0; accent-color: var(--green); }
+    .actions { display: flex; gap: 9px; margin-top: 12px; }
+    .actions button { flex: 1; }
+    .notice { margin-top: 15px; padding: 11px 12px; border-radius: 8px; display: none; font-size: 11px; }
+    .notice.show { display: block; }
+    .notice.info { background: #eef4f0; color: #3e6650; }
+    .notice.error { background: #fcf0ed; color: #94513f; }
+    @media (max-width: 880px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { display: none; }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      header { padding: 0 18px; }
+      .content { padding: 28px 16px 40px; }
+      .top-row { align-items: start; flex-direction: column; }
+      .two-col { grid-template-columns: 1fr; gap: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand"><div class="brand-mark">S</div><div class="brand-name">Signal &amp; Story</div></div>
+      <div class="nav-label">WORKSPACE</div>
+      <div class="nav-item active">✦ &nbsp; Overview</div>
+      <div class="nav-item">◉ &nbsp; Trend research</div>
+      <div class="nav-item">▤ &nbsp; Draft library</div>
+      <div class="nav-item">◷ &nbsp; Publishing queue</div>
+      <div class="nav-label">PREFERENCES</div>
+      <div class="nav-item">⚙ &nbsp; Connections</div>
+      <div class="sidebar-note"><strong>Human-first publishing</strong><br><br>Review facts, sources, and image rights before anything goes live.</div>
+    </aside>
+
+    <main>
+      <header>
+        <div class="crumb">Workspace &nbsp; / &nbsp; Overview</div>
+        <div class="account"><div class="avatar">S</div> Blog workspace</div>
+      </header>
+
+      <section class="content">
+        <div class="top-row">
+          <div>
+            <div class="eyebrow">Your editorial studio</div>
+            <h1>Find the signal.<br>Tell a better story.</h1>
+            <p class="subhead">Research topic ideas, shape a thoughtful draft, and review it before publishing.</p>
+          </div>
+          <div><span class="status"><span class="dot"></span> Demo mode — backend not connected</span></div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <section class="card">
+              <div class="card-head">
+                <h2>Topics gaining momentum</h2>
+                <span class="small-label" id="trendDate">Sample topics</span>
+              </div>
+              <div class="trend-list" id="trendList"></div>
+              <div class="trend-source">Connect a trend-research backend to replace these sample ideas with live, sourced data.</div>
+            </section>
+
+            <section class="card" style="margin-top:20px">
+              <div class="card-head">
+                <h2>Shape your article</h2>
+                <span class="small-label">Editorial brief</span>
+              </div>
+              <div class="form">
+                <label for="topic">Topic or working title</label>
+                <input id="topic" placeholder="Choose a trend above or enter a topic">
+                <label for="angle">Your angle and audience</label>
+                <textarea id="angle" placeholder="What should readers learn? What experience or perspective can you add?"></textarea>
+                <div class="two-col">
+                  <div>
+                    <label for="tone">Writing style</label>
+                    <input id="tone" value="Professional, clear, warm">
+                  </div>
+                  <div>
+                    <label for="length">Approx. length</label>
+                    <input id="length" value="900 words">
+                  </div>
+                </div>
+                <p class="hint">A good brief adds your perspective. Verify claims and cite trustworthy sources in the finished article.</p>
+                <button class="primary full" id="generateBtn">✦ &nbsp; Create article draft</button>
+              </div>
+            </section>
+          </div>
+
+          <section class="card preview">
+            <div class="card-head">
+              <h2>Draft preview</h2>
+              <span class="small-label" id="draftStatus">Waiting for a topic</span>
+            </div>
+            <div class="preview-body">
+              <div class="preview-image" id="imagePreview">Suggested cover image appears here<br><small>Use licensed or approved imagery</small></div>
+              <div class="preview-title" id="previewTitle">Your next story starts here</div>
+              <div class="preview-meta" id="previewMeta">Select a topic and create a draft</div>
+              <div class="preview-copy" id="previewCopy">Your draft will appear in this space. Review the content, sources, and image choice before publishing.</div>
+              <div class="approval">
+                <input type="checkbox" id="approval">
+                <label for="approval" style="margin:0;font-weight:500">I have reviewed this draft, checked its factual claims and sources, and have permission to use its image.</label>
+              </div>
+              <div class="actions">
+                <button class="secondary" id="saveBtn">Save draft</button>
+                <button class="primary" id="publishBtn">Publish</button>
+              </div>
+              <div class="notice" id="notice"></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Replace these demo topics with data from your server's trend-research service.
+    const sampleTrends = [
+      { icon: "🌿", title: "Practical climate adaptation", meta: "Environment · Useful, local solutions", growth: "Rising interest" },
+      { icon: "🧠", title: "AI at work, with human judgment", meta: "Technology · Skills and workplace change", growth: "Rising interest" },
+      { icon: "💳", title: "Everyday financial resilience", meta: "Personal finance · Habits and planning", growth: "Steady interest" },
+      { icon: "🏡", title: "Small-space living and design", meta: "Lifestyle · Practical home ideas", growth: "Rising interest" }
+    ];
+
+    let currentDraft = null;
+    const $ = (id) => document.getElementById(id);
+
+    function showNotice(message, type = "info") {
+      const el = $("notice");
+      el.textContent = message;
+      el.className = "notice show " + type;
+    }
+
+    function renderTrends(items) {
+      $("trendList").innerHTML = "";
+      items.forEach((trend) => {
+        const row = document.createElement("div");
+        row.className = "trend";
+        row.innerHTML = `<div class="trend-icon">${trend.icon || "✦"}</div>
+          <div><div class="trend-title"></div><div class="trend-meta"></div></div>
+          <div class="growth"></div>`;
+        row.querySelector(".trend-title").textContent = trend.title;
+        row.querySelector(".trend-meta").textContent = trend.meta || "";
+        row.querySelector(".growth").textContent = trend.growth || "";
+        row.addEventListener("click", () => {
+          document.querySelectorAll(".trend").forEach(x => x.classList.remove("selected"));
+          row.classList.add("selected");
+          $("topic").value = trend.title;
+        });
+        $("trendList").appendChild(row);
+      });
+    }
+
+    async function loadTrends() {
+      try {
+        const response = await fetch("/api/trends");
+        if (!response.ok) throw new Error("Trend service is unavailable.");
+        const data = await response.json();
+        if (Array.isArray(data.trends) && data.trends.length) {
+          renderTrends(data.trends);
+          $("trendDate").textContent = data.updatedAt ? `Updated ${data.updatedAt}` : "Live research";
+          return;
+        }
+      } catch (_) {
+        // Keep demo topics visible until the backend is configured.
+      }
+      renderTrends(sampleTrends);
+    }
+
+    $("generateBtn").addEventListener("click", async () => {
+      const topic = $("topic").value.trim();
+      if (!topic) {
+        showNotice("Choose a topic or enter one before creating a draft.", "error");
+        return;
+      }
+
+      const button = $("generateBtn");
+      button.disabled = true;
+      button.textContent = "Creating draft…";
+      $("draftStatus").textContent = "Working…";
+      showNotice("Requesting a draft from the server. In demo mode, this will show setup guidance.");
+
+      try {
+        const response = await fetch("/api/drafts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            topic,
+            angle: $("angle").value.trim(),
+            tone: $("tone").value.trim(),
+            length: $("length").value.trim()
+          })
+        });
+        if (!response.ok) throw new Error("Draft service is not configured.");
+        currentDraft = await response.json();
+        $("previewTitle").textContent = currentDraft.title || topic;
+        $("previewMeta").textContent = currentDraft.readingTime || "Draft ready for review";
+        $("previewCopy").textContent = currentDraft.body || "The server returned an empty draft.";
+        if (currentDraft.imageUrl) {
+          const image = document.createElement("img");
+          image.src = currentDraft.imageUrl;
+          image.alt = currentDraft.imageAlt || "Suggested article cover";
+          $("imagePreview").replaceChildren(image);
+        }
+        $("draftStatus").textContent = "Ready for review";
+        $("approval").checked = false;
+        showNotice("Draft created. Review its claims, sources, and image rights before publishing.");
+      } catch (_) {
+        currentDraft = null;
+        $("draftStatus").textContent = "Backend needed";
+        showNotice("Demo mode: connect a secure backend at /api/drafts to generate article text and source references. No article was generated.", "error");
+      } finally {
+        button.disabled = false;
+        button.innerHTML = "✦ &nbsp; Create article draft";
+      }
+    });
+
+    $("saveBtn").addEventListener("click", async () => {
+      if (!currentDraft) {
+        showNotice("There is no server-generated draft to save yet. Connect /api/drafts first.", "error");
+        return;
+      }
+      try {
+        const response = await fetch("/api/drafts", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(currentDraft)
+        });
+        if (!response.ok) throw new Error();
+        showNotice("Draft saved.");
+      } catch (_) {
+        showNotice("Could not save draft. Configure the backend draft-storage route.", "error");
+      }
+    });
+
+    $("publishBtn").addEventListener("click", async () => {
+      if (!currentDraft) {
+        showNotice("No draft is ready. Generate a draft through your backend first.", "error");
+        return;
+      }
+      if (!$("approval").checked) {
+        showNotice("Please review the draft and confirm the checklist before publishing.", "error");
+        return;
+      }
+      try {
+        const response = await fetch("/api/publish", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ draft: currentDraft, approved: true })
+        });
+        if (!response.ok) throw new Error();
+        const result = await response.json();
+        showNotice(result.url ? `Published successfully: ${result.url}` : "Published successfully.");
+      } catch (_) {
+        showNotice("Publishing is not connected. Configure a secure backend and confirm Medium currently permits your integration before enabling this action.", "error");
+      }
+    });
+
+    loadTrends();
+  </script>
+</body>
+</html>
